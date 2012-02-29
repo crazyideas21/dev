@@ -3,6 +3,7 @@ Wrapper functions for the OpenFlow switch.
 
 """
 import sys
+import time
 import config
 import shared
 import subprocess
@@ -18,6 +19,8 @@ def reset_flow_table():
                        hostname=config.ofctl_ip)
     p.wait()
     
+    # Let system stabilize.
+    time.sleep(4)
     
 
 
@@ -67,4 +70,4 @@ def add_rules(rule_count):
 if __name__ == '__main__':
     
     reset_flow_table()
-    add_rules(1000)    
+    add_rules(1500)    

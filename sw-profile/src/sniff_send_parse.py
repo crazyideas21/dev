@@ -70,6 +70,9 @@ def save(pickle_file_name):
     'flow_count', 'target_bw_Mbps', 'global_stat', 'max_time'], in which:
 
     """
+    if config.verbose:
+        print 'Saving results to', pickle_file_name, '...'
+        
     f_obj = open(pickle_file_name, 'w')
     pickle.dump({'global_stat': state.global_stat,
                  'flow_stat': state.flow_stat,
@@ -199,6 +202,7 @@ def _get_new_pkt(flow_id, seq_number, sent_time, recvd_time):
 
 
 def test():
+    """ Simple test driver that verifies basic correctness. """
 
     import switch
     

@@ -1,6 +1,8 @@
 import math
 import config
 import subprocess
+import traceback
+import datetime
 
 
 def run_cmd(*cmd_args, **kwargs):
@@ -53,10 +55,11 @@ def sync_clocks():
     coarse and should be called once.
 
     """
-    remote_proc = subprocess.Popen(['ssh', 'root@' + config.pktgen_host,
-                                    'ntpdate -p 8 ntp.ucsd.edu'])
-    local_proc = subprocess.Popen(['ntpdate', '-p', '8', 'ntp.ucsd.edu'])
-
+    ntpdate_cmd = 'pkill ntpd; ntpdate -p 8 ntp.ucsd.edu'
+    
+    remote_proc = run_ssh(ntpdate_cmd, hostname=config.pktgen_host)
+    local_proc  = run_cmd(ntpdate_cmd)
+    
     print 'Synchronizing clocks...'
     assert local_proc.wait() == 0 and remote_proc.wait() == 0
 
@@ -80,3 +83,36 @@ def get_mean_and_stdev(inlist):
 
     stdev = math.sqrt(sum_sq / (length - 1))
     return (mean, stdev)
+
+
+
+
+def safe_run(func, *args, **kwargs):
+    """
+    Executes a function and returns its result safely. Aborts and logs traceback
+    to err.log upon error.
+    
+    """
+
+    try:
+        return func(*args, **kwargs)
+
+    except Exception, err:
+        error_log('Function %s, %s, %s' % (repr(func), repr(args), repr(kwargs)))
+        error_log('Exception: %s, %s' % (err, repr(err)))
+        error_log(traceback.format_exc())
+
+
+
+def error_log(log_str):
+    """ Logs error to err.log. """
+    
+    try:
+        f = open('err.log', 'w')
+        log_str = '[%s] %s' % (datetime.datetime.now(), log_str)
+        print >> f, log_str
+        print log_str
+        f.close()
+
+    except Exception, err:
+        print 'Logging failed:', repr(err), str(err)
