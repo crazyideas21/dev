@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+USAGE = """
+Brings the eth1 on Kevin's hosts either UP or DOWN. Parameters:
+
+./ifconfig-all [up|down]
+
+"""
+import sys
+import subprocess
+
+state = 'down'
+
+host_list = []
+
+# C08-??
+c_range = range(1, 21) + range(26, 42)
+map(c_range.remove, [11, 17, 29, 32])
+host_list += [('root@C08-%02d' % i) for i in c_range]
+
+# B08-??
+b_range = [17] + range(25, 40)
+host_list += [('-p 33%03d root@172.19.222.80' % i) for i in b_range]
+
+
+def main():
+
+    # Check args
+
+    global link_state
+    try:
+        link_state = sys.argv[1]
+        assert link_state in ('up', 'down')
+    except:
+        print USAGE
+        return
+
+    # Parallel SSH
+
+    ssh_list = map(run_ssh, host_list)
+
+    for p in ssh_list:
+        p.wait()
+
+    print 'Done'
+
+    
+
+
+def run_ssh(hostname):
+
+    cmd = '/sbin/ifconfig eth1 ' + link_state
+    return subprocess.Popen('ssh %s "%s"' % (hostname, cmd),
+                         shell=True)
+
+
+
+if __name__ == '__main__':
+    main()
