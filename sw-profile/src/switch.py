@@ -24,7 +24,7 @@ def reset_flow_table():
     
 
 
-def dump_tables():
+def dump_tables(filter='table_id=0'):
     """
     Returns a list of rules in the TCAM (table_id = 0).
     
@@ -32,7 +32,7 @@ def dump_tables():
     p = shared.run_ssh(config.dump_flows_cmd,
                        hostname=config.ofctl_ip, stdout=subprocess.PIPE,
                        verbose=False)
-    return [line for line in p.stdout if line.find('table_id=0') > 0]
+    return [line for line in p.stdout if line.find(filter) >= 0]
 
 
 

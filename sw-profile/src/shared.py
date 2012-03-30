@@ -101,6 +101,7 @@ def safe_run(func, *args, **kwargs):
         error_log('Function %s, %s, %s' % (repr(func), repr(args), repr(kwargs)))
         error_log('Exception: %s, %s' % (err, repr(err)))
         error_log(traceback.format_exc())
+        return None
 
 
 

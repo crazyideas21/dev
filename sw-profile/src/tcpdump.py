@@ -13,7 +13,8 @@ import state
 
 
 
-def sniff_and_send():
+def sniff_and_send(pkt_count_arg=None, pkt_size_arg=None, 
+                     gap_ns_arg=None, flow_count_arg=None):
     """
     Main entry point. Starts sniff for traffic while generating packets on the
     remote host. 
@@ -21,13 +22,9 @@ def sniff_and_send():
     Returns None.
     
     """
-    # Calculate the necessary parameters. Work in bits.
+    ignore_global_params = None not in (pkt_count_arg, pkt_size_arg, 
+                                        gap_ns_arg, flow_count_arg)
     
-    target_bw_bps = config.target_bw_Mbps * 1000 * 1000
-    pkt_size_b = config.pkt_size * 8
-    pkt_count = target_bw_bps * config.max_time / pkt_size_b
-    gap_ns = pkt_size_b * (10**9) / target_bw_bps # nanoseconds
-
     # Sniff. Save the text output to check for kernel-dropped packets.    
     
     shared.run_cmd('tcpdump -i ', config.sniff_iface,
@@ -37,24 +34,47 @@ def sniff_and_send():
 
     # Send!
     
-    p_pktgen = pktgen.send(pkt_count, config.pkt_size, 
-                           gap_ns, config.flow_count)
+    if ignore_global_params:
 
-    # Make sure pktgen runs no more than max_time.
-    
-    pktgen_start_time = time.time()
-    elapsed_time = 0
+        # Use the function arguments.
+                        
+        p_pktgen = pktgen.send(pkt_count_arg, pkt_size_arg, 
+                               gap_ns_arg, flow_count_arg)
 
-    while elapsed_time <= config.max_time and p_pktgen.poll() is None:    
+    else:
+
+        # Calculate the necessary parameters. Work in bits.
         
-        elapsed_time = time.time() - pktgen_start_time
-        time.sleep(1)    
+        target_bw_bps = config.target_bw_Mbps * 1000 * 1000
+        pkt_size_b = config.pkt_size * 8
+        pkt_count = target_bw_bps * config.max_time / pkt_size_b
+        gap_ns = pkt_size_b * (10**9) / target_bw_bps # nanoseconds
+
+        p_pktgen = pktgen.send(pkt_count, config.pkt_size, 
+                               gap_ns, config.flow_count)
+       
+    if ignore_global_params:
         
-        sys.stdout.write('\r%s sec left' % int(config.max_time - elapsed_time))
-        sys.stdout.flush()
-    
-    print ''
-    pktgen.stop_and_parse_result()
+        print 'Waiting for pktgen to complete.'
+        p_pktgen.wait()
+
+    else:
+
+        # Make sure pktgen runs no more than max_time.
+        
+        pktgen_start_time = time.time()
+        elapsed_time = 0
+        
+        while elapsed_time <= config.max_time and p_pktgen.poll() is None:    
+            
+            elapsed_time = time.time() - pktgen_start_time
+            time.sleep(1)    
+            
+            sys.stdout.write('\r%s sec left' % int(config.max_time - elapsed_time))
+            sys.stdout.flush()
+        
+        print ''
+        pktgen.stop_and_parse_result()
 
     # Wait a bit before terminating tcpdump. It's probably not getting new
     # packets any more. Send Ctrl+C to tcpdump.

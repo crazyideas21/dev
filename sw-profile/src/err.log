@@ -1,0 +1,7 @@
+[2012-03-14 16:21:13.897029] Traceback (most recent call last):
+  File "/root/dev/sw-profile/src/shared.py", line 98, in safe_run
+    return func(*args, **kwargs)
+  File "rule_installation.py", line 30, in send_and_count
+    return len(switch.dump_tables(filter='table=0'))
+TypeError: dump_tables() takes no arguments (1 given)
+

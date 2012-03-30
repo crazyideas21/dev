@@ -26,13 +26,13 @@ def main():
 
         for forward_bw in [1200]:
 
-            reset_state()            
-            try:
-                switch.reset_flow_table()
-                switch.add_rules(flow_count)
-            except Exception, err:
-                print 'Cannot add rules:', repr(err)
-                continue
+#            reset_state()            
+#            try:
+#                switch.reset_flow_table()
+#                switch.add_rules(flow_count)
+#            except Exception, err:
+#                print 'Cannot add rules:', repr(err)
+#                continue
 
             time.sleep(2)
 
@@ -41,7 +41,7 @@ def main():
             config.max_time = 60
             config.target_bw_Mbps = forward_bw
 
-            shared.safe_run(run_and_save, 'hp')
+            shared.safe_run(run_and_save, 'direct')
 
 
 
