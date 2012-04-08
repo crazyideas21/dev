@@ -1,0 +1,1 @@
+cmd_/root/dev/evs-1.4.0/datapath/linux/brcompat_mod.o := ld -m elf_x86_64   -r -o /root/dev/evs-1.4.0/datapath/linux/brcompat_mod.o /root/dev/evs-1.4.0/datapath/linux/genetlink-brcompat.o /root/dev/evs-1.4.0/datapath/linux/brcompat.o 

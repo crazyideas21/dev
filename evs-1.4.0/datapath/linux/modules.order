@@ -1,0 +1,2 @@
+kernel//root/dev/evs-1.4.0/datapath/linux/openvswitch_mod.ko
+kernel//root/dev/evs-1.4.0/datapath/linux/brcompat_mod.ko

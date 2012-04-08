@@ -1,0 +1,1 @@
+cmd_/root/dev/evs-1.4.0/datapath/linux/brcompat_mod.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-2.6.35-32-generic/scripts/module-common.lds --build-id -o /root/dev/evs-1.4.0/datapath/linux/brcompat_mod.ko /root/dev/evs-1.4.0/datapath/linux/brcompat_mod.o /root/dev/evs-1.4.0/datapath/linux/brcompat_mod.mod.o

@@ -1,0 +1,1 @@
+cmd_/root/dev/evs-1.4.0/datapath/linux/openvswitch_mod.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-2.6.35-32-generic/scripts/module-common.lds --build-id -o /root/dev/evs-1.4.0/datapath/linux/openvswitch_mod.ko /root/dev/evs-1.4.0/datapath/linux/openvswitch_mod.o /root/dev/evs-1.4.0/datapath/linux/openvswitch_mod.mod.o
